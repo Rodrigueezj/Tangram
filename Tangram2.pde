@@ -1,4 +1,4 @@
-boolean traslapo, reflejo=true;
+boolean traslapo, reflejo=true, ganar=false,espacio=false,fin=false;
 boolean[]MoverPieza=new boolean[8];
 int escala, escala2;
 int[]posicionx=new int[8];{
@@ -12,11 +12,11 @@ posicionx[7]=100;
 }
 int[]posiciony= new int[8];{
 posiciony[1]=350;
-posiciony[2]=40;
+posiciony[2]=140;
 posiciony[3]=250;
 posiciony[4]=100;
 posiciony[5]=50;
-posiciony[6]=70;
+posiciony[6]=140;
 posiciony[7]=400;
 }
 int[]rotar=new int[8];
@@ -55,7 +55,11 @@ void keyPressed(){
     escala=-1;
     escala2=1;
   }
+  if (key==' '){
+    espacio=true;
+  }
 }
+//traslapo
 void mouseReleased(){
   for(int i=1; i<=7; i++)
   {
@@ -66,22 +70,79 @@ void mouseReleased(){
 void draw(){
   color colorfigura=get(mouseX, mouseY); //Obtiene el color del pixel donde se encuentra el mouse
   background(90);
+  textSize(20);
+    fill(255,255,255);
+    text("Instrucciones", 10, 30); 
+    text("Para mover cualquier figura, arrástrela con el mouse.", 10, 50);  
+    text("Para girar las figura en sentido horario, utilice la flecha ←", 10, 70);
+    text("Para girar las figura en sentido antihorario, utilice la flecha →", 10, 90);
+    text("Para voltear el paralelepípedo, utilice la flecha ↑", 10, 110); 
   fill(48,99,206);
-  rect(470,140,405,405);
-  println(colorfigura);
+  rect(475,145,400,400);
+  println(mouseX,mouseY);
+  //Nivel dos, está acá arriba para que las piezas no se borren
+  if(ganar==true&&espacio==true){
+    background(90);
+    fill(48,99,206);
+  pushMatrix();
+    noStroke();
+    translate(1000,51);
+    rotate(PI/4);
+    quad(0,0,0,200,-100,300,-100,100);
+  popMatrix();
+  pushMatrix();
+    noStroke();
+    translate(717,191);
+    rotate(-PI/4);
+    quad(0,0,100,100,0,200,-100,100);
+  popMatrix();
+  pushMatrix();
+    translate(435,50);
+    rotate(-PI/4);
+    triangle(0,0,0,400,-200,200);
+  popMatrix();
+  pushMatrix();
+    translate(317,332);
+    rotate(-PI/2);
+    triangle(0,0,0,400,-200,200);
+  popMatrix();
+  pushMatrix();
+    noStroke();
+    translate(1000,250);
+    rotate(PI);
+    triangle(0,0,100,100,0,200);
+  popMatrix();
+  pushMatrix();
+    translate(717, 473);
+    rotate(5*PI/4);
+    triangle(0,0,100,100,0,200);
+  popMatrix();
+  pushMatrix();
+    translate(717,531);
+    rotate(PI);
+    triangle(0,0,0,200,200,0);
+  popMatrix();
+  if(key==' '&&get(652,211)==-10855846){
+  fin=true;
+  }
+  
+  }
 //paralelepípedo 
   pushMatrix();
+      noStroke();
   translate(posicionx[1], posiciony[1]);
   rotate(rotar[1]*PI/4);
   fill(colorr[1]);
   if(reflejo==true){
   quad(0,0,0,200,-100,300,-100,100);
   }else{
-  scale(escala,escala2);
-  quad(0,0,0,200,-100,300,-100,100);
-  }popMatrix();
+     scale(escala,escala2);
+     quad(0,0,0,200,-100,300,-100,100);
+   }
+  popMatrix();
 //cuadrado
   pushMatrix();
+      noStroke();
   translate(posicionx[2], posiciony[2]);
   rotate(rotar[2]*PI/4);
   fill(colorr[2]);
@@ -89,6 +150,7 @@ void draw(){
   popMatrix();
   //triangulo grande blanco
   pushMatrix();
+      noStroke();
   translate(posicionx[3], posiciony[3]);
   rotate(rotar[3]*PI/4);
   fill(colorr[3]);
@@ -96,6 +158,7 @@ void draw(){
   popMatrix();
   //triangulo grande violeta
   pushMatrix();
+      noStroke();
   translate(posicionx[4], posiciony[4]);
   rotate(rotar[4]*PI/4);
   fill(colorr[4]);
@@ -103,6 +166,7 @@ void draw(){
   popMatrix();
   //triangulo pequeño azul
   pushMatrix();
+      noStroke();
   translate(posicionx[5], posiciony[5]);
   rotate(rotar[5]*PI/4);
   fill(colorr[5]);
@@ -110,6 +174,7 @@ void draw(){
   popMatrix();
   //triangulo pequeño verde
   pushMatrix();
+      noStroke();
   translate(posicionx[6], posiciony[6]);
   rotate(rotar[6]*PI/4);
   fill(colorr[6]);
@@ -117,6 +182,7 @@ void draw(){
   popMatrix();
   //Triángulo mediano
   pushMatrix();
+      noStroke();
   translate(posicionx[7], posiciony[7]);
   rotate(rotar[7]*PI/4);
   fill(colorr[7]);
@@ -185,6 +251,7 @@ void draw(){
     posicionx[7]=mouseX;
     posiciony[7]=mouseY;
   }
+  //lectura de pixeles para saber si ganó
   loadPixels();
   int cuadros=0;
   for(int x=0; x<(width*height); x++){
@@ -193,9 +260,17 @@ void draw(){
     }
   }
   updatePixels();
-  if(cuadros<2100){
+  if(cuadros<2000){
+    ganar=true;
     textSize(32);
-    text("¡Ganaste!", 10, 30); 
+    text("¡Ganaste!", 700, 30); 
+    text("¡Presiona espacio para continuar!", 700, 60); 
     fill(0, 102, 153); 
+  }//termina el programa en el segundo nivel
+  if(key==' '&&get(652,211)==-10855846&&fin==true){
+   background(90);
+  fill(0,0,0);
+  textSize(100);
+  text("Felicitaciones", 400,400); 
   }
 }
